@@ -1,0 +1,98 @@
+<script type="module">
+	import Product from '/api/wjst/product';
+	import Dom from '/api/wjst/dom';
+	Product.perPage = 1;
+	let page = 1;
+
+    if ((await Product.page(1)).length < Product.perPage) {
+		Dom.remove('loadProducts');
+	}
+
+	document.getElementById('loadProducts').addEventListener('click', async () => {
+		page++;
+		const products = await Product.page(page);
+
+        if (products.length < Product.perPage) {
+		Dom.remove('loadProducts');
+	}
+
+		for (const product of products) {
+			if (!product.thumbs) {
+				product.thumbs = [];
+			}
+			Dom.add('products', Dom.template('product', {
+				price: product.price,
+				thumb: product.thumb,
+				thumbs: product.thumbs.map(thumb => {
+					return Dom.template('product_thumb', {
+						name: product.name,
+						thumb
+					})
+				}),
+				name: product.name,
+				_id: product._id
+			}));
+		}
+	});
+</script>
+
+<div class="container-new">
+	<div>
+		<h1>Products</h1>
+	<a href="#page-sample" class="btn btn-circle page-scroll">
+		<i class="fa fa-angle-double-down animated"></i>
+	</a>
+</div>
+<!-- Page Sample Section -->
+<section id="page-sample">
+	<div class="polosar">
+		<div class="container content-section text-center" id="products">
+			<div class="row">
+				<h3 class="text-center">{{{product_description}}}</h3>
+				{% for product in products %}
+				<div class="img-slider">
+					<div class="col-md-4">
+						<a href="/product/{{{product.id}}}">
+							<div class="card">
+								<img src="{{{product.thumb}}}" alt="{{{product.name}}}" width="700px"
+									class="img-rounded">
+								<div class="card-body">
+									<h5>{{{product.price}}}</h5>
+									<h5 class="card-title">{{{product.name}}}</h5>
+									<p class="card-text">{{{product.short}}} </p>
+								</div>
+							</div>
+						</a>
+					</div>
+				</div>
+				{% endfor %}
+		</div>
+		<button class="load-more" id="loadProducts">Load more</button>
+
+		<div id="template-product">
+			<div class="row">
+				<h3 class="text-center">{{{product_description}}}</h3>
+				{% for product in products %}
+				<div class="img-slider">
+					<div class="col-md-4">
+						<a href="/product/{_id}">
+							<div class="card">
+								<img src="{thumb}" alt="{thumb}" width="700px"
+									class="img-rounded">
+								<div class="card-body">
+									<h5 class="card-title">{thumb}</h5>
+									<p class="card-text">{short}</p>
+								</div>
+							</div>
+						</a>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+		</div>
+	</div>
+	м
+</div>
+</section>
+</div>
